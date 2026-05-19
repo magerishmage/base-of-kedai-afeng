@@ -1,0 +1,1987 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Base of Kedai Afeng — Scanner</title>
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Zen+Antique&family=Comic+Neue:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --blue0: #f0f6ff;
+    --blue1: #ddeeff;
+    --blue2: #a8c7f0;
+    --blue3: #3a7bd5;
+    --blue4: #1a4fa0;
+    --crayon-blue: #6baee8;
+    --crayon-sky: #b8dcf8;
+    --crayon-paper: #f7faff;
+    --crayon-white: #ffffff;
+    --text-dark: #1c2e4a;
+    --text-mid: #4a6a9a;
+    --text-muted: #8aaed4;
+    --green: #27a86e;
+    --red: #e2534a;
+    --orange: #e8962a;
+    --manga-border: 3px solid #2a4a7a;
+    --radius: 14px;
+    --radius-sm: 8px;
+  }
+
+  body {
+    font-family: 'Comic Neue', cursive;
+    background: var(--crayon-paper);
+    min-height: 100vh;
+    color: var(--text-dark);
+  }
+
+  /* ── HALFTONE BG ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: radial-gradient(circle, #a8c7f020 1px, transparent 1px);
+    background-size: 22px 22px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    position: relative;
+    background: var(--crayon-white);
+    border-bottom: var(--manga-border);
+    padding: 1rem 2rem 0.9rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    z-index: 10;
+    overflow: hidden;
+  }
+
+  .header::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 4px;
+    background: repeating-linear-gradient(90deg, var(--blue3) 0, var(--blue3) 14px, var(--crayon-sky) 14px, var(--crayon-sky) 28px);
+  }
+
+  .header-left { display: flex; align-items: center; gap: 16px; }
+
+  .ball {
+    width: 52px; height: 52px;
+    flex-shrink: 0;
+    filter: drop-shadow(2px 3px 0 var(--blue2));
+  }
+
+  .site-title {
+    font-family: 'Bangers', cursive;
+    font-size: 32px;
+    color: var(--blue3);
+    letter-spacing: 3px;
+    line-height: 1;
+    text-shadow: 3px 3px 0 var(--crayon-sky), 5px 5px 0 var(--blue2);
+  }
+
+  .site-sub {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-muted);
+    letter-spacing: 1.5px;
+    margin-top: 3px;
+    text-transform: uppercase;
+  }
+
+  .header-right { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+  .live-dot {
+    width: 8px; height: 8px;
+    background: var(--green);
+    border-radius: 50%;
+    animation: pulse 1.6s ease-in-out infinite;
+    display: inline-block;
+    margin-right: 4px;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.7); }
+  }
+
+  .badge {
+    background: var(--blue1);
+    color: var(--blue4);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 5px 14px;
+    border-radius: 20px;
+    border: 1.5px solid var(--blue2);
+    font-family: 'Comic Neue', cursive;
+  }
+
+  .btn {
+    background: var(--blue3);
+    color: #fff;
+    border: none;
+    border-radius: 20px;
+    padding: 7px 18px;
+    font-size: 13px;
+    font-family: 'Bangers', cursive;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+  }
+  .btn:hover { background: var(--blue4); transform: translateY(-1px); }
+  .btn:active { transform: translateY(0); }
+  .btn-ghost {
+    background: var(--blue1);
+    color: var(--blue3);
+    border: 1.5px solid var(--blue2);
+  }
+  .btn-ghost:hover { background: var(--blue2); color: var(--blue4); }
+
+  /* ── SEARCH PANEL ── */
+  .search-panel {
+    position: relative;
+    z-index: 9;
+    background: var(--crayon-white);
+    border-bottom: 2px solid var(--blue1);
+    padding: 1rem 2rem;
+  }
+
+  .search-panel h2 {
+    font-family: 'Bangers', cursive;
+    font-size: 15px;
+    color: var(--text-muted);
+    letter-spacing: 2px;
+    margin-bottom: 10px;
+  }
+
+  .search-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .ca-input {
+    flex: 1;
+    min-width: 260px;
+    background: var(--blue0);
+    border: 2px solid var(--blue2);
+    border-radius: 12px;
+    padding: 10px 16px;
+    font-size: 14px;
+    font-family: 'Comic Neue', cursive;
+    color: var(--text-dark);
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .ca-input:focus { border-color: var(--blue3); background: #fff; }
+  .ca-input::placeholder { color: var(--text-muted); }
+
+  /* ── MAIN CONTENT ── */
+  .main {
+    position: relative;
+    z-index: 1;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1.5rem 1.5rem 3rem;
+  }
+
+  /* ── HOME STATE ── */
+  .home-state {
+    text-align: center;
+    padding: 4rem 2rem;
+  }
+
+  .home-ball {
+    margin: 0 auto 1.5rem;
+    width: 90px; height: 90px;
+    animation: bounce 2s ease-in-out infinite;
+  }
+
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-12px); }
+  }
+
+  .home-title {
+    font-family: 'Bangers', cursive;
+    font-size: 38px;
+    color: var(--blue3);
+    letter-spacing: 3px;
+    text-shadow: 3px 3px 0 var(--crayon-sky);
+    margin-bottom: 0.5rem;
+  }
+
+  .home-sub {
+    color: var(--text-muted);
+    font-size: 14px;
+    font-weight: 700;
+    max-width: 480px;
+    margin: 0 auto 2rem;
+    line-height: 1.6;
+  }
+
+  .feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 12px;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+
+  .feature-card {
+    background: var(--crayon-white);
+    border: 2px solid var(--blue1);
+    border-radius: var(--radius);
+    padding: 1rem;
+    text-align: left;
+  }
+
+  .feature-icon {
+    font-size: 22px;
+    margin-bottom: 8px;
+    display: block;
+  }
+
+  .feature-label {
+    font-family: 'Bangers', cursive;
+    font-size: 14px;
+    color: var(--blue3);
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+  }
+
+  .feature-desc {
+    font-size: 11px;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+
+  /* ── LOADING ── */
+  .loading-panel {
+    text-align: center;
+    padding: 3rem;
+  }
+
+  .loading-manga {
+    font-family: 'Bangers', cursive;
+    font-size: 24px;
+    color: var(--blue3);
+    letter-spacing: 3px;
+    animation: blink 0.9s ease-in-out infinite;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  .progress-bar {
+    max-width: 300px;
+    margin: 1rem auto;
+    height: 6px;
+    background: var(--blue1);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--blue3);
+    border-radius: 4px;
+    animation: progress 2s ease-in-out infinite;
+  }
+
+  @keyframes progress {
+    0% { width: 0%; }
+    60% { width: 80%; }
+    100% { width: 100%; }
+  }
+
+  /* ── RESULT LAYOUT ── */
+  .result-grid {
+    display: grid;
+    grid-template-columns: 340px 1fr;
+    gap: 16px;
+    align-items: start;
+  }
+
+  @media (max-width: 860px) {
+    .result-grid { grid-template-columns: 1fr; }
+  }
+
+  /* ── CARD ── */
+  .card {
+    background: var(--crayon-white);
+    border: 2px solid var(--blue1);
+    border-radius: var(--radius);
+    padding: 1.25rem;
+    margin-bottom: 14px;
+  }
+
+  .card-title {
+    font-family: 'Bangers', cursive;
+    font-size: 16px;
+    color: var(--blue3);
+    letter-spacing: 2px;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 1.5px solid var(--blue1);
+    padding-bottom: 8px;
+  }
+
+  .card-title span { font-size: 18px; }
+
+  /* ── TOKEN IDENTITY ── */
+  .token-hero {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 1rem;
+  }
+
+  .token-avatar {
+    width: 52px; height: 52px;
+    border-radius: 50%;
+    background: var(--blue1);
+    border: 2px solid var(--blue2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Bangers', cursive;
+    font-size: 20px;
+    color: var(--blue3);
+    flex-shrink: 0;
+  }
+
+  .token-name { font-family: 'Bangers', cursive; font-size: 26px; color: var(--blue3); letter-spacing: 2px; }
+  .token-pair { font-size: 12px; color: var(--text-muted); font-weight: 700; }
+  .token-addr { font-size: 10px; color: var(--text-muted); font-family: monospace; margin-top: 2px; word-break: break-all; }
+
+  .price-big {
+    font-family: 'Bangers', cursive;
+    font-size: 36px;
+    color: var(--text-dark);
+    letter-spacing: 1px;
+  }
+
+  /* ── METRICS GRID ── */
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .metric {
+    background: var(--blue0);
+    border-radius: var(--radius-sm);
+    padding: 0.6rem 0.8rem;
+  }
+
+  .metric-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 3px;
+  }
+
+  .metric-value {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-dark);
+  }
+
+  /* ── CHANGE BADGES ── */
+  .change-up { color: var(--green); font-weight: 700; }
+  .change-down { color: var(--red); font-weight: 700; }
+  .change-neutral { color: var(--text-muted); }
+
+  /* ── SCORE SYSTEM ── */
+  .score-section { margin-bottom: 14px; }
+
+  .score-item {
+    margin-bottom: 10px;
+  }
+
+  .score-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+  }
+
+  .score-name {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-mid);
+  }
+
+  .score-num {
+    font-family: 'Bangers', cursive;
+    font-size: 16px;
+    color: var(--blue3);
+  }
+
+  .score-track {
+    height: 8px;
+    background: var(--blue1);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  .score-fill-bar {
+    height: 100%;
+    border-radius: 6px;
+    transition: width 1s cubic-bezier(.4,0,.2,1);
+  }
+
+  .score-fill-liq { background: linear-gradient(90deg, #a8c7f0, #3a7bd5); }
+  .score-fill-wallet { background: linear-gradient(90deg, #f0c060, #e8962a); }
+  .score-fill-flow { background: linear-gradient(90deg, #60d0a0, #27a86e); }
+  .score-fill-holder { background: linear-gradient(90deg, #d0a8f0, #7a3ad5); }
+  .score-fill-narrative { background: linear-gradient(90deg, #f0a0a8, #d53a4a); }
+
+  .total-score-box {
+    background: var(--blue1);
+    border: 2px solid var(--blue2);
+    border-radius: var(--radius);
+    padding: 1rem;
+    text-align: center;
+    margin-top: 12px;
+  }
+
+  .total-score-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-muted);
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+  }
+
+  .total-score-val {
+    font-family: 'Bangers', cursive;
+    font-size: 42px;
+    color: var(--blue3);
+    line-height: 1;
+  }
+
+  .entry-verdict {
+    font-family: 'Bangers', cursive;
+    font-size: 16px;
+    letter-spacing: 2px;
+    margin-top: 6px;
+  }
+
+  /* ── RIGHT COLUMN ── */
+  .right-col {}
+
+  /* ── CANDLE SECTION ── */
+  .candle-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 6px;
+  }
+
+  .candle-item {
+    background: var(--blue0);
+    border-radius: var(--radius-sm);
+    padding: 0.6rem;
+    text-align: center;
+  }
+
+  .candle-period {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .candle-val {
+    font-family: 'Bangers', cursive;
+    font-size: 20px;
+    letter-spacing: 1px;
+  }
+
+  /* ── BUY/SELL BAR ── */
+  .buysell-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .buysell-track {
+    height: 12px;
+    border-radius: 6px;
+    background: var(--red);
+    overflow: hidden;
+    position: relative;
+  }
+
+  .buysell-fill {
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    border-radius: 6px;
+    background: var(--green);
+    transition: width 1s ease;
+  }
+
+  /* ── LP VELOCITY ── */
+  .lp-signals {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .lp-signal-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    background: var(--blue0);
+    border-radius: var(--radius-sm);
+    padding: 0.6rem 0.8rem;
+  }
+
+  .signal-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+
+  .signal-body {}
+
+  .signal-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 2px;
+  }
+
+  .signal-desc {
+    font-size: 11px;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+
+  /* ── SOCIAL ── */
+  .social-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .social-item {
+    background: var(--blue0);
+    border-radius: var(--radius-sm);
+    padding: 0.8rem;
+  }
+
+  .social-platform {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text-muted);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .social-val {
+    font-family: 'Bangers', cursive;
+    font-size: 22px;
+    color: var(--blue3);
+  }
+
+  .social-sub {
+    font-size: 10px;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+
+  /* ── HEAT TAG ── */
+  .heat-tag {
+    display: inline-block;
+    font-family: 'Bangers', cursive;
+    letter-spacing: 1px;
+    font-size: 13px;
+    padding: 3px 12px;
+    border-radius: 20px;
+    margin-top: 8px;
+  }
+
+  .heat-hot { background: #fff0e0; color: #c05000; border: 1.5px solid #f0b060; }
+  .heat-warm { background: #fff8e0; color: #a07000; border: 1.5px solid #e0d060; }
+  .heat-cool { background: var(--blue1); color: var(--blue4); border: 1.5px solid var(--blue2); }
+
+  /* ── ENTRY SIGNAL ── */
+  .entry-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 10px;
+  }
+
+  .entry-item {
+    border-radius: var(--radius-sm);
+    padding: 0.75rem;
+    text-align: center;
+    border: 2px solid transparent;
+  }
+
+  .entry-green { background: #eafaf2; border-color: #60d0a0; }
+  .entry-yellow { background: #fffbea; border-color: #e0d060; }
+  .entry-red { background: #fff0f0; border-color: #f0a0a0; }
+
+  .entry-signal-name {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text-muted);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .entry-signal-val {
+    font-family: 'Bangers', cursive;
+    font-size: 15px;
+    letter-spacing: 1px;
+  }
+
+  .entry-ok { color: var(--green); }
+  .entry-warn { color: var(--orange); }
+  .entry-bad { color: var(--red); }
+
+  /* ── SECTION LABEL ── */
+  .section-label {
+    font-family: 'Bangers', cursive;
+    color: var(--blue2);
+    font-size: 12px;
+    letter-spacing: 3px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--blue1);
+  }
+
+  /* ── LINKS ── */
+  .chip-link {
+    display: inline-block;
+    background: var(--blue1);
+    color: var(--blue3);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 20px;
+    text-decoration: none;
+    border: 1.5px solid var(--blue2);
+    transition: background 0.15s;
+  }
+  .chip-link:hover { background: var(--blue2); }
+
+  /* ── MANGA DECO ── */
+  .manga-deco {
+    position: fixed;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.04;
+  }
+
+  .error-box {
+    background: #fff0f0;
+    border: 2px solid #f0a0a0;
+    border-radius: var(--radius);
+    padding: 1rem 1.5rem;
+    color: var(--red);
+    font-weight: 700;
+    font-size: 13px;
+    margin: 1rem 0;
+  }
+
+  /* ── DEPLOYER ── */
+  .deployer-rows { display: flex; flex-direction: column; gap: 6px; }
+  .deployer-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--blue0);
+    border-radius: var(--radius-sm);
+    padding: 0.5rem 0.8rem;
+    font-size: 12px;
+  }
+  .deployer-key { color: var(--text-muted); font-weight: 700; }
+  .deployer-val { color: var(--text-dark); font-weight: 700; font-family: monospace; font-size: 11px; }
+
+  /* ── NARRATIVE LIFECYCLE ── */
+  .lifecycle-track {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin: 1rem 0 0.5rem;
+    position: relative;
+  }
+
+  .lifecycle-step {
+    flex: 1;
+    text-align: center;
+    position: relative;
+    cursor: default;
+  }
+
+  .lifecycle-step::before {
+    content: '';
+    display: block;
+    height: 4px;
+    background: var(--blue1);
+    position: absolute;
+    top: 14px;
+    left: 50%;
+    right: -50%;
+    z-index: 0;
+  }
+
+  .lifecycle-step:last-child::before { display: none; }
+
+  .lifecycle-dot {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: var(--blue1);
+    border: 2px solid var(--blue2);
+    margin: 0 auto 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    position: relative;
+    z-index: 1;
+    transition: all 0.3s;
+  }
+
+  .lifecycle-dot.active {
+    background: var(--blue3);
+    border-color: var(--blue4);
+    box-shadow: 0 0 0 4px var(--crayon-sky);
+    transform: scale(1.2);
+  }
+
+  .lifecycle-dot.passed {
+    background: var(--blue2);
+    border-color: var(--blue3);
+  }
+
+  .lifecycle-label {
+    font-size: 9px;
+    font-weight: 700;
+    color: var(--text-muted);
+    letter-spacing: 0.5px;
+    line-height: 1.2;
+  }
+
+  .lifecycle-label.active { color: var(--blue3); }
+
+  .lifecycle-phase-box {
+    border-radius: var(--radius);
+    padding: 1rem 1.2rem;
+    margin-top: 1rem;
+    border: 2px solid;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .phase-stealth  { background: #f0f4ff; border-color: #a0b8e0; }
+  .phase-emerging { background: #f0fff8; border-color: #60d0a0; }
+  .phase-expansion{ background: #eef8ff; border-color: #3a7bd5; }
+  .phase-euphoria { background: #fff8e0; border-color: #e8c030; }
+  .phase-dist     { background: #fff0e0; border-color: #e8962a; }
+  .phase-dead     { background: #f8f0f8; border-color: #c0a0c0; }
+
+  .phase-emoji { font-size: 32px; flex-shrink: 0; }
+
+  .phase-name {
+    font-family: 'Bangers', cursive;
+    font-size: 20px;
+    letter-spacing: 2px;
+    margin-bottom: 4px;
+  }
+
+  .phase-desc {
+    font-size: 12px;
+    color: var(--text-mid);
+    line-height: 1.6;
+  }
+
+  /* ── WHY THIS PHASE ── */
+  .why-phase-box {
+    margin-top: 10px;
+    background: rgba(0,0,0,0.03);
+    border-radius: var(--radius-sm);
+    padding: 0.7rem 0.9rem;
+    border-left: 3px solid var(--blue3);
+  }
+
+  .why-phase-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text-muted);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .why-phase-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .why-phase-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    font-size: 11px;
+    color: var(--text-dark);
+    line-height: 1.5;
+    font-weight: 700;
+  }
+
+  .why-phase-dot {
+    flex-shrink: 0;
+    font-size: 10px;
+    margin-top: 1px;
+  }
+
+  .why-val-up { color: var(--green); }
+  .why-val-down { color: var(--red); }
+  .why-val-neutral { color: var(--blue3); }
+
+  /* ── SECTOR HEATMAP ── */
+  .sector-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 8px;
+    margin-top: 4px;
+  }
+
+  .sector-card {
+    border-radius: var(--radius-sm);
+    padding: 0.7rem 0.8rem;
+    border: 2px solid transparent;
+    cursor: default;
+    transition: transform 0.15s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .sector-card:hover { transform: translateY(-2px); }
+
+  .sector-hot  { background: #fff8e0; border-color: #e8c030; }
+  .sector-warm { background: #f0fff8; border-color: #60d0a0; }
+  .sector-cool { background: var(--blue0); border-color: var(--blue2); }
+  .sector-cold { background: #fff0f0; border-color: #f0a0a0; }
+
+  .sector-name {
+    font-family: 'Bangers', cursive;
+    font-size: 14px;
+    letter-spacing: 1px;
+    color: var(--text-dark);
+    margin-bottom: 2px;
+  }
+
+  .sector-pct {
+    font-size: 18px;
+    font-weight: 700;
+  }
+
+  .sector-bar-wrap {
+    height: 4px;
+    background: rgba(0,0,0,0.06);
+    border-radius: 2px;
+    margin-top: 6px;
+    overflow: hidden;
+  }
+
+  .sector-bar-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 1s ease;
+  }
+
+  .sector-tag {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    margin-top: 3px;
+    text-transform: uppercase;
+  }
+
+  .sector-highlight {
+    position: absolute;
+    top: 6px; right: 8px;
+    font-size: 14px;
+  }
+
+  .heatmap-updated {
+    font-size: 10px;
+    color: var(--text-muted);
+    text-align: right;
+    margin-top: 6px;
+    font-weight: 700;
+  }
+
+  .token-sector-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--blue1);
+    border: 1.5px solid var(--blue2);
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--blue4);
+    margin-top: 8px;
+  }
+</style>
+</head>
+<body>
+
+<!-- MANGA DECO -->
+<svg class="manga-deco" style="top:10%;left:-40px;width:200px;" viewBox="0 0 200 200">
+  <circle cx="100" cy="100" r="90" fill="none" stroke="#3a7bd5" stroke-width="8"/>
+  <circle cx="100" cy="100" r="60" fill="none" stroke="#3a7bd5" stroke-width="4"/>
+  <line x1="10" y1="100" x2="190" y2="100" stroke="#3a7bd5" stroke-width="4"/>
+  <line x1="100" y1="10" x2="100" y2="190" stroke="#3a7bd5" stroke-width="4"/>
+  <path d="M29 29 L171 171 M171 29 L29 171" stroke="#3a7bd5" stroke-width="3"/>
+</svg>
+<svg class="manga-deco" style="bottom:8%;right:-30px;width:160px;" viewBox="0 0 160 160">
+  <polygon points="80,5 95,55 148,55 104,88 121,138 80,107 39,138 56,88 12,55 65,55" fill="#3a7bd5"/>
+</svg>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-left">
+    <svg class="ball" viewBox="0 0 52 52" fill="none">
+      <circle cx="26" cy="26" r="24" fill="#ddeeff" stroke="#a8c7f0" stroke-width="2"/>
+      <circle cx="26" cy="26" r="24" fill="none" stroke="#3a7bd5" stroke-width="2.5"/>
+      <path d="M2 26 Q14 8, 26 26 Q38 44, 50 26" stroke="#3a7bd5" stroke-width="2" fill="none"/>
+      <path d="M2 26 Q14 44, 26 26 Q38 8, 50 26" stroke="#3a7bd5" stroke-width="2" fill="none"/>
+      <line x1="26" y1="2" x2="26" y2="50" stroke="#3a7bd5" stroke-width="2"/>
+    </svg>
+    <div>
+      <div class="site-title">BASE OF KEDAI AFENG</div>
+      <div class="site-sub">🏀 Base Chain Token Intelligence · Real-time · Free</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <span><span class="live-dot"></span></span>
+    <span class="badge" id="last-updated">Siap scan</span>
+    <button class="btn btn-ghost" onclick="clearResult()">← Reset</button>
+  </div>
+</div>
+
+<!-- SEARCH PANEL -->
+<div class="search-panel">
+  <h2>// PASTE CONTRACT ADDRESS (CA) BASE CHAIN</h2>
+  <div class="search-row">
+    <input
+      class="ca-input"
+      type="text"
+      id="ca-input"
+      placeholder="0x... contract address token Base chain"
+      maxlength="42"
+    />
+    <button class="btn" onclick="startScan()">🔍 SCAN TOKEN</button>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main" id="main-content">
+
+  <!-- HOME STATE -->
+  <div id="home-state" class="home-state">
+    <svg class="home-ball" viewBox="0 0 90 90" fill="none">
+      <circle cx="45" cy="45" r="42" fill="#ddeeff" stroke="#a8c7f0" stroke-width="3"/>
+      <circle cx="45" cy="45" r="42" fill="none" stroke="#3a7bd5" stroke-width="3"/>
+      <path d="M3 45 Q24 12, 45 45 Q66 78, 87 45" stroke="#3a7bd5" stroke-width="2.5" fill="none"/>
+      <path d="M3 45 Q24 78, 45 45 Q66 12, 87 45" stroke="#3a7bd5" stroke-width="2.5" fill="none"/>
+      <line x1="45" y1="3" x2="45" y2="87" stroke="#3a7bd5" stroke-width="2.5"/>
+    </svg>
+    <div class="home-title">YOUR BASE? PASTE ON KEDAI AFENG!</div>
+    <p class="home-sub">Scanner khusus Base Chain · Liquidity Intel · Entry Score · Social Heat · Deployer Check · Semua gratis</p>
+    <div class="feature-grid">
+      <div class="feature-card">
+        <span class="feature-icon">💧</span>
+        <div class="feature-label">LIQUIDITY INTEL</div>
+        <div class="feature-desc">LP health, velocity, concentration, stability score</div>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">🏀</span>
+        <div class="feature-label">ENTRY SCORE</div>
+        <div class="feature-desc">5 layer: liquidity, wallet, flow, holder, narrative</div>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">🌐</span>
+        <div class="feature-label">SOCIAL HEAT</div>
+        <div class="feature-desc">Farcaster mentions, Warpcast activity, trending</div>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">🔍</span>
+        <div class="feature-label">DEPLOYER CHECK</div>
+        <div class="feature-desc">Wallet history, trust score, contract age</div>
+      </div>
+    </div>
+
+    <!-- SECTOR HEATMAP PANEL -->
+    <div style="max-width:700px; margin:2rem auto 0;">
+      <div class="card">
+        <div class="card-title"><span>🗺️</span> BASE SECTOR ROTATION — LIVE
+          <span style="margin-left:auto; font-size:11px; font-family:'Comic Neue',cursive; color:var(--text-muted); font-weight:700; letter-spacing:0;">via DexScreener trending</span>
+        </div>
+        <div class="sector-grid" id="sector-grid">
+          <div style="color:var(--text-muted); font-size:13px; font-weight:700; grid-column:1/-1; padding:1rem 0; text-align:center;">Loading sector data... 🏀</div>
+        </div>
+        <div class="heatmap-updated" id="sector-updated">—</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LOADING STATE -->
+  <div id="loading-state" style="display:none;" class="loading-panel">
+    <div class="loading-manga" id="loading-text">FETCHING DATA...</div>
+    <div class="progress-bar"><div class="progress-fill"></div></div>
+    <p style="color:var(--text-muted); font-size:12px; margin-top:1rem;" id="loading-step">Connecting ke DexScreener + GeckoTerminal...</p>
+  </div>
+
+  <!-- ERROR -->
+  <div id="error-state" style="display:none;" class="error-box" id="error-box"></div>
+
+  <!-- RESULT -->
+  <div id="result-state" style="display:none;">
+
+    <div class="result-grid">
+
+      <!-- LEFT COLUMN -->
+      <div class="left-col">
+
+        <!-- TOKEN IDENTITY -->
+        <div class="card">
+          <div class="card-title"><span>🏀</span> TOKEN IDENTITY</div>
+          <div class="token-hero">
+            <div class="token-avatar" id="r-avatar">?</div>
+            <div>
+              <div class="token-name" id="r-symbol">—</div>
+              <div class="token-pair" id="r-pair">—</div>
+              <div class="token-addr" id="r-addr">—</div>
+            </div>
+          </div>
+          <div class="price-big" id="r-price">$—</div>
+          <div style="margin-top:6px; font-size:12px; color:var(--text-muted);">
+            FDV: <b id="r-fdv">—</b> &nbsp;·&nbsp; Liq: <b id="r-liq">—</b>
+          </div>
+          <div style="margin-top:12px; display:flex; gap:8px; flex-wrap:wrap;">
+            <a id="r-dexscreener-link" href="#" target="_blank" class="chip-link">→ DexScreener</a>
+            <a id="r-gecko-link" href="#" target="_blank" class="chip-link">→ GeckoTerminal</a>
+            <a id="r-basescan-link" href="#" target="_blank" class="chip-link">→ BaseScan</a>
+          </div>
+        </div>
+
+        <!-- ENTRY SCORE -->
+        <div class="card">
+          <div class="card-title"><span>🎯</span> ENTRY SCORE</div>
+          <div class="score-section">
+            <div class="score-item">
+              <div class="score-row">
+                <span class="score-name">💧 Liquidity Stability</span>
+                <span class="score-num" id="s-liq">—</span>
+              </div>
+              <div class="score-track"><div class="score-fill-bar score-fill-liq" id="sb-liq" style="width:0%"></div></div>
+            </div>
+            <div class="score-item">
+              <div class="score-row">
+                <span class="score-name">👛 Wallet Quality</span>
+                <span class="score-num" id="s-wallet">—</span>
+              </div>
+              <div class="score-track"><div class="score-fill-bar score-fill-wallet" id="sb-wallet" style="width:0%"></div></div>
+            </div>
+            <div class="score-item">
+              <div class="score-row">
+                <span class="score-name">📊 Flow Momentum</span>
+                <span class="score-num" id="s-flow">—</span>
+              </div>
+              <div class="score-track"><div class="score-fill-bar score-fill-flow" id="sb-flow" style="width:0%"></div></div>
+            </div>
+            <div class="score-item">
+              <div class="score-row">
+                <span class="score-name">🤝 Holder Retention</span>
+                <span class="score-num" id="s-holder">—</span>
+              </div>
+              <div class="score-track"><div class="score-fill-bar score-fill-holder" id="sb-holder" style="width:0%"></div></div>
+            </div>
+            <div class="score-item">
+              <div class="score-row">
+                <span class="score-name">🔥 Narrative Heat</span>
+                <span class="score-num" id="s-narrative">—</span>
+              </div>
+              <div class="score-track"><div class="score-fill-bar score-fill-narrative" id="sb-narrative" style="width:0%"></div></div>
+            </div>
+          </div>
+          <div class="total-score-box">
+            <div class="total-score-label">TOTAL ENTRY SCORE</div>
+            <div class="total-score-val" id="total-score">—</div>
+            <div class="entry-verdict" id="entry-verdict">—</div>
+          </div>
+        </div>
+
+        <!-- NARRATIVE LIFECYCLE -->
+        <div class="card">
+          <div class="card-title"><span>🔄</span> NARRATIVE LIFECYCLE</div>
+          <div class="lifecycle-track" id="lifecycle-track">
+            <!-- filled by JS -->
+          </div>
+          <div class="lifecycle-phase-box phase-stealth" id="lifecycle-phase-box">
+            <div class="phase-emoji" id="lifecycle-emoji">⏳</div>
+            <div style="flex:1;">
+              <div class="phase-name" id="lifecycle-name">Loading...</div>
+              <div class="phase-desc" id="lifecycle-desc">Menganalisa fase token...</div>
+              <div class="why-phase-box" id="why-phase-box" style="display:none;">
+                <div class="why-phase-label">🧠 Why this phase?</div>
+                <div class="why-phase-list" id="why-phase-list"></div>
+              </div>
+            </div>
+          </div>
+          <div id="token-sector-wrap" style="margin-top:8px;"></div>
+        </div>
+
+        <!-- DEPLOYER -->
+        <div class="card">
+          <div class="card-title"><span>🔍</span> DEPLOYER INTEL</div>
+          <div class="deployer-rows">
+            <div class="deployer-row">
+              <span class="deployer-key">DEX</span>
+              <span class="deployer-val" id="d-dex">—</span>
+            </div>
+            <div class="deployer-row">
+              <span class="deployer-key">Pair Age</span>
+              <span class="deployer-val" id="d-age">—</span>
+            </div>
+            <div class="deployer-row">
+              <span class="deployer-key">Pair Address</span>
+              <span class="deployer-val" id="d-pair">—</span>
+            </div>
+            <div class="deployer-row">
+              <span class="deployer-key">Chain</span>
+              <span class="deployer-val" id="d-chain">Base</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT COLUMN -->
+      <div class="right-col">
+
+        <!-- PRICE ACTION -->
+        <div class="card">
+          <div class="card-title"><span>📈</span> PRICE ACTION</div>
+          <div class="candle-grid">
+            <div class="candle-item">
+              <div class="candle-period">5 Min</div>
+              <div class="candle-val" id="c-5m">—</div>
+            </div>
+            <div class="candle-item">
+              <div class="candle-period">1 Hour</div>
+              <div class="candle-val" id="c-1h">—</div>
+            </div>
+            <div class="candle-item">
+              <div class="candle-period">6 Hour</div>
+              <div class="candle-val" id="c-6h">—</div>
+            </div>
+            <div class="candle-item">
+              <div class="candle-period">24 Hour</div>
+              <div class="candle-val" id="c-24h">—</div>
+            </div>
+            <div class="candle-item">
+              <div class="candle-period">Vol 24h</div>
+              <div class="candle-val" style="font-size:14px;" id="c-vol">—</div>
+            </div>
+            <div class="candle-item">
+              <div class="candle-period">Txns 24h</div>
+              <div class="candle-val" id="c-txns">—</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- BUY/SELL PRESSURE -->
+        <div class="card">
+          <div class="card-title"><span>⚡</span> BUY / SELL PRESSURE</div>
+          <div class="buysell-label">
+            <span style="color:var(--green);">Buys: <b id="bs-buys">—</b></span>
+            <span style="color:var(--red);">Sells: <b id="bs-sells">—</b></span>
+          </div>
+          <div class="buysell-track">
+            <div class="buysell-fill" id="bs-bar" style="width:50%"></div>
+          </div>
+          <div style="font-size:11px; color:var(--text-muted); margin-top:6px;" id="bs-interpretation">—</div>
+        </div>
+
+        <!-- LIQUIDITY INTELLIGENCE -->
+        <div class="card">
+          <div class="card-title"><span>💧</span> LIQUIDITY INTELLIGENCE</div>
+          <div class="section-label">// LP SIGNALS</div>
+          <div class="lp-signals" id="lp-signals">
+            <div class="lp-signal-row">
+              <span class="signal-icon">⏳</span>
+              <div class="signal-body">
+                <div class="signal-title">Loading LP data...</div>
+                <div class="signal-desc">Fetching dari GeckoTerminal</div>
+              </div>
+            </div>
+          </div>
+          <div style="margin-top:12px;">
+            <div class="metrics-grid">
+              <div class="metric">
+                <div class="metric-label">Liquidity USD</div>
+                <div class="metric-value" id="liq-usd">—</div>
+              </div>
+              <div class="metric">
+                <div class="metric-label">Vol / Liq Ratio</div>
+                <div class="metric-value" id="liq-ratio">—</div>
+              </div>
+              <div class="metric">
+                <div class="metric-label">Liq Health</div>
+                <div class="metric-value" id="liq-health">—</div>
+              </div>
+              <div class="metric">
+                <div class="metric-label">GeckoTerminal</div>
+                <div class="metric-value" style="font-size:12px;" id="gecko-pool">—</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SOCIAL + NARRATIVE -->
+        <div class="card">
+          <div class="card-title"><span>🌐</span> SOCIAL + NARRATIVE HEAT</div>
+          <div class="social-grid">
+            <div class="social-item">
+              <div class="social-platform">🟣 Farcaster</div>
+              <div class="social-val" id="soc-farcaster">—</div>
+              <div class="social-sub" id="soc-farcaster-sub">mention estimates</div>
+            </div>
+            <div class="social-item">
+              <div class="social-platform">🟠 DexScreener Boost</div>
+              <div class="social-val" id="soc-boost">—</div>
+              <div class="social-sub">trending signal</div>
+            </div>
+            <div class="social-item">
+              <div class="social-platform">🐦 Twitter/X</div>
+              <div class="social-val" id="soc-twitter">—</div>
+              <div class="social-sub" id="soc-twitter-url" style="word-break:break-all; font-size:9px;"></div>
+            </div>
+            <div class="social-item">
+              <div class="social-platform">🌐 Website</div>
+              <div class="social-val" id="soc-web">—</div>
+              <div class="social-sub" id="soc-web-url" style="word-break:break-all; font-size:9px;"></div>
+            </div>
+          </div>
+          <div id="heat-tag-container" style="margin-top:10px;"></div>
+        </div>
+
+        <!-- ENTRY SIGNAL BREAKDOWN -->
+        <div class="card">
+          <div class="card-title"><span>🎯</span> ENTRY CONDITION CHECK</div>
+          <div class="entry-grid" id="entry-grid">
+          </div>
+          <div style="margin-top:14px; padding:0.8rem; background:var(--blue0); border-radius:var(--radius-sm);">
+            <div style="font-size:11px; font-weight:700; color:var(--text-muted); margin-bottom:4px;">INTERPRETASI</div>
+            <div style="font-size:13px; color:var(--text-dark); line-height:1.6;" id="entry-interpretation">—</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ── UTILS ──
+const $ = id => document.getElementById(id);
+
+function fmtUSD(n) {
+  if (!n || isNaN(n)) return '—';
+  if (n >= 1e9) return '$' + (n/1e9).toFixed(2) + 'B';
+  if (n >= 1e6) return '$' + (n/1e6).toFixed(2) + 'M';
+  if (n >= 1e3) return '$' + (n/1e3).toFixed(1) + 'K';
+  return '$' + parseFloat(n).toPrecision(4);
+}
+
+function fmtPct(n) {
+  if (n === undefined || n === null || isNaN(n)) return '<span style="color:var(--text-muted)">—</span>';
+  const sign = n > 0 ? '+' : '';
+  const col = n > 0 ? 'var(--green)' : n < 0 ? 'var(--red)' : 'var(--text-muted)';
+  return `<span style="color:${col}; font-weight:700;">${sign}${parseFloat(n).toFixed(2)}%</span>`;
+}
+
+function fmtAge(ms) {
+  const d = Math.floor(ms / 86400000);
+  const h = Math.floor((ms % 86400000) / 3600000);
+  if (d > 0) return d + 'd ' + h + 'h';
+  const m = Math.floor((ms % 3600000) / 60000);
+  return h + 'h ' + m + 'm';
+}
+
+function shortAddr(s) {
+  if (!s) return '—';
+  return s.slice(0, 8) + '...' + s.slice(-6);
+}
+
+function setLoading(step) {
+  $('loading-step').textContent = step;
+}
+
+// ── STATES ──
+function showHome() {
+  $('home-state').style.display = 'block';
+  $('loading-state').style.display = 'none';
+  $('error-state').style.display = 'none';
+  $('result-state').style.display = 'none';
+}
+
+function showLoading(text) {
+  $('home-state').style.display = 'none';
+  $('loading-state').style.display = 'block';
+  $('error-state').style.display = 'none';
+  $('result-state').style.display = 'none';
+  $('loading-text').textContent = text || 'FETCHING DATA...';
+}
+
+function showError(msg) {
+  $('home-state').style.display = 'none';
+  $('loading-state').style.display = 'none';
+  $('error-state').style.display = 'block';
+  $('result-state').style.display = 'none';
+  $('error-state').innerHTML = '⚠️ ' + msg;
+}
+
+function showResult() {
+  $('home-state').style.display = 'none';
+  $('loading-state').style.display = 'none';
+  $('error-state').style.display = 'none';
+  $('result-state').style.display = 'block';
+}
+
+function clearResult() {
+  $('ca-input').value = '';
+  showHome();
+  $('last-updated').textContent = 'Siap scan';
+}
+
+// ── SCORE HELPERS ──
+function setScore(id, barId, val) {
+  $(id).textContent = Math.round(val);
+  $(barId).style.width = Math.min(val, 100) + '%';
+}
+
+function calcLiqScore(pair) {
+  const liq = pair.liquidity?.usd || 0;
+  const vol = pair.volume?.h24 || 0;
+  let s = 0;
+  if (liq > 500000) s += 40;
+  else if (liq > 100000) s += 30;
+  else if (liq > 30000) s += 20;
+  else if (liq > 5000) s += 10;
+  const ratio = liq > 0 ? vol / liq : 0;
+  if (ratio > 0 && ratio < 5) s += 30;
+  else if (ratio >= 5 && ratio < 20) s += 20;
+  else if (ratio >= 20) s += 10;
+  const age = pair.pairCreatedAt ? Date.now() - pair.pairCreatedAt : 0;
+  if (age > 7 * 86400000) s += 20;
+  else if (age > 86400000) s += 12;
+  else if (age > 3600000) s += 6;
+  return Math.min(s, 100);
+}
+
+function calcFlowScore(pair) {
+  const b = pair.txns?.h24?.buys || 0;
+  const s2 = pair.txns?.h24?.sells || 0;
+  const total = b + s2;
+  if (total === 0) return 40;
+  const ratio = b / total;
+  let s = 0;
+  if (ratio > 0.65) s = 85;
+  else if (ratio > 0.55) s = 70;
+  else if (ratio > 0.45) s = 55;
+  else if (ratio > 0.35) s = 40;
+  else s = 25;
+  if (total > 500) s = Math.min(s + 10, 100);
+  else if (total > 100) s = Math.min(s + 5, 100);
+  return s;
+}
+
+function calcHolderScore(pair) {
+  const liq = pair.liquidity?.usd || 0;
+  const age = pair.pairCreatedAt ? Date.now() - pair.pairCreatedAt : 0;
+  let s = 50;
+  if (liq > 200000 && age > 3 * 86400000) s = 80;
+  else if (liq > 50000 && age > 86400000) s = 65;
+  else if (liq < 5000) s = 30;
+  return s;
+}
+
+function calcNarrativeScore(pair, socialData) {
+  let s = 40;
+  if (pair.boosts?.active) s += 20;
+  if (socialData?.twitter) s += 10;
+  if (socialData?.website) s += 10;
+  if (pair.priceChange?.h1 > 10) s += 10;
+  if (pair.priceChange?.h24 > 20) s += 10;
+  return Math.min(s, 100);
+}
+
+function calcWalletScore(pair) {
+  const liq = pair.liquidity?.usd || 0;
+  const vol = pair.volume?.h24 || 0;
+  const age = pair.pairCreatedAt ? Date.now() - pair.pairCreatedAt : 0;
+  let s = 50;
+  if (liq > 100000) s += 15;
+  if (age > 7 * 86400000) s += 15;
+  if (vol > 50000) s += 10;
+  if (pair.txns?.h24?.buys > 200) s += 10;
+  return Math.min(s, 100);
+}
+
+function getVerdict(score) {
+  if (score >= 80) return { label: '🏀 EARLY ACCUMULATION!', color: 'var(--green)' };
+  if (score >= 65) return { label: '📈 STRUCTURED EXPANSION', color: 'var(--blue3)' };
+  if (score >= 50) return { label: '⚠️ WATCHLIST MODE', color: 'var(--orange)' };
+  if (score >= 35) return { label: '🔥 OVERHEATED ZONE', color: '#c05000' };
+  return { label: '🚨 EXIT LIQUIDITY RISK', color: 'var(--red)' };
+}
+
+function getEntryConditions(pair, scores) {
+  const liq = pair.liquidity?.usd || 0;
+  const buys = pair.txns?.h24?.buys || 0;
+  const sells = pair.txns?.h24?.sells || 0;
+  const age = pair.pairCreatedAt ? Date.now() - pair.pairCreatedAt : 0;
+  const ratio = buys + sells > 0 ? buys / (buys + sells) : 0.5;
+
+  return [
+    {
+      name: 'Liquidity Safe',
+      val: liq > 50000 ? 'OK' : liq > 10000 ? 'LOW' : 'DANGER',
+      cls: liq > 50000 ? 'entry-green entry-ok' : liq > 10000 ? 'entry-yellow entry-warn' : 'entry-red entry-bad'
+    },
+    {
+      name: 'Buy Dominant',
+      val: ratio > 0.55 ? 'YES' : ratio > 0.45 ? 'EVEN' : 'NO',
+      cls: ratio > 0.55 ? 'entry-green entry-ok' : ratio > 0.45 ? 'entry-yellow entry-warn' : 'entry-red entry-bad'
+    },
+    {
+      name: 'Pair Age',
+      val: age > 7 * 86400000 ? 'MATURE' : age > 86400000 ? 'NEW' : 'VERY NEW',
+      cls: age > 7 * 86400000 ? 'entry-green entry-ok' : age > 86400000 ? 'entry-yellow entry-warn' : 'entry-red entry-bad'
+    },
+    {
+      name: 'LP Healthy',
+      val: scores.liq > 60 ? 'YES' : scores.liq > 40 ? 'MEDIUM' : 'WEAK',
+      cls: scores.liq > 60 ? 'entry-green entry-ok' : scores.liq > 40 ? 'entry-yellow entry-warn' : 'entry-red entry-bad'
+    },
+    {
+      name: 'Vol Organic',
+      val: pair.volume?.h24 > 10000 ? 'YES' : pair.volume?.h24 > 1000 ? 'LOW' : 'THIN',
+      cls: pair.volume?.h24 > 10000 ? 'entry-green entry-ok' : pair.volume?.h24 > 1000 ? 'entry-yellow entry-warn' : 'entry-red entry-bad'
+    },
+    {
+      name: 'Narrative Heat',
+      val: scores.narrative > 65 ? 'HOT' : scores.narrative > 45 ? 'WARM' : 'COLD',
+      cls: scores.narrative > 65 ? 'entry-green entry-ok' : scores.narrative > 45 ? 'entry-yellow entry-warn' : 'entry-red entry-bad'
+    }
+  ];
+}
+
+function getEntryInterpretation(total, pair) {
+  const liq = pair.liquidity?.usd || 0;
+  const age = pair.pairCreatedAt ? Date.now() - pair.pairCreatedAt : 0;
+  if (total >= 80) return `Token ini menunjukkan sinyal early accumulation yang kuat. Liquidity stabil, buy pressure dominan, dan usia pair cukup mature. Entry zone ini statistically favorable untuk Base chain — tapi selalu set stop loss.`;
+  if (total >= 65) return `Sinyal expansion terdeteksi. Market structure sehat dengan liquidity yang baik. Belum overheated. Ideal buat position entry bertahap — jangan all-in sekaligus.`;
+  if (total >= 50) return `Kondisi mixed. Ada sinyal positif tapi juga ada risiko. Masukkan ke watchlist, tunggu konfirmasi liquidity stability sebelum entry.`;
+  if (total >= 35) return `Token ini terlihat overheated. Buy pressure sudah tinggi, risiko exit liquidity ada. Kalau mau masuk, harus sangat selective dan size kecil.`;
+  return `High risk zone. Liquidity tipis, struktur pair belum mature, atau buy/sell ratio tidak sehat. Hindari entry kecuali ada informasi fundamental yang kuat.`;
+}
+
+// ── LP SIGNALS ──
+function buildLPSignals(pair) {
+  const liq = pair.liquidity?.usd || 0;
+  const vol = pair.volume?.h24 || 0;
+  const ratio = liq > 0 ? (vol / liq).toFixed(2) : '—';
+  const age = pair.pairCreatedAt ? Date.now() - pair.pairCreatedAt : 0;
+  const signals = [];
+
+  if (liq > 100000 && vol < liq * 5) {
+    signals.push({ icon: '✅', title: 'Liquidity Stabil', desc: `LP ${fmtUSD(liq)} dengan volume sehat. Tidak ada tanda violent removal.` });
+  } else if (liq < 10000) {
+    signals.push({ icon: '⚠️', title: 'Liquidity Tipis', desc: `LP hanya ${fmtUSD(liq)} — rentan manipulasi harga. Hati-hati slippage.` });
+  } else {
+    signals.push({ icon: '🔵', title: 'Liquidity Normal', desc: `LP ${fmtUSD(liq)} — dalam range acceptable untuk Base chain.` });
+  }
+
+  const volLiqRatio = liq > 0 ? vol / liq : 0;
+  if (volLiqRatio > 20) {
+    signals.push({ icon: '🔥', title: 'Volume/LP Ratio Tinggi', desc: `Ratio ${ratio}x — token sedang di-trade agresif. Bisa signal pump atau potensi LP drain.` });
+  } else if (volLiqRatio < 0.5 && vol > 0) {
+    signals.push({ icon: '😴', title: 'Volume Rendah vs LP', desc: `Ratio ${ratio}x — pasar sepi relatif ke LP. Bisa tanda accumulation diam-diam.` });
+  } else {
+    signals.push({ icon: '✅', title: 'Vol/LP Ratio Sehat', desc: `Ratio ${ratio}x — aktivitas trading proporsional dengan likuiditas.` });
+  }
+
+  if (age > 7 * 86400000) {
+    signals.push({ icon: '🏆', title: 'Pair Mature', desc: `Usia pair ${fmtAge(age)}. LP sudah terbukti bertahan lama — signal deployer serius.` });
+  } else if (age < 3600000) {
+    signals.push({ icon: '🆕', title: 'Pair Sangat Baru', desc: `Usia pair ${fmtAge(age)}. Belum ada track record LP. Perlu monitor ketat.` });
+  } else {
+    signals.push({ icon: '🌱', title: 'Pair Baru Berkembang', desc: `Usia pair ${fmtAge(age)}. Masih dalam fase early — observe LP movement.` });
+  }
+
+  return signals.map(s => `
+    <div class="lp-signal-row">
+      <span class="signal-icon">${s.icon}</span>
+      <div class="signal-body">
+        <div class="signal-title">${s.title}</div>
+        <div class="signal-desc">${s.desc}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ── FETCH DEXSCREENER ──
+async function fetchDexScreener(ca) {
+  setLoading('Fetching dari DexScreener...');
+  const res = await fetch(`https://api.dexscreener.com/latest/dex/tokens/${ca}`);
+  if (!res.ok) throw new Error('DexScreener API error: ' + res.status);
+  const data = await res.json();
+  if (!data.pairs || !data.pairs.length) throw new Error('Token tidak ditemukan di DexScreener. Pastikan CA benar dan token ada di Base chain.');
+  const basePairs = data.pairs.filter(p => p.chainId === 'base');
+  if (!basePairs.length) throw new Error('Token ini bukan di Base chain, atau belum listed di DexScreener.');
+  basePairs.sort((a, b) => (b.liquidity?.usd || 0) - (a.liquidity?.usd || 0));
+  return basePairs[0];
+}
+
+// ── FETCH GECKO ──
+async function fetchGecko(ca) {
+  setLoading('Fetching dari GeckoTerminal...');
+  try {
+    const res = await fetch(`https://api.geckoterminal.com/api/v2/networks/base/tokens/${ca}/pools?page=1`);
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data?.data?.[0] || null;
+  } catch { return null; }
+}
+
+// ── FETCH FARCASTER (public searchcaster) ──
+async function fetchFarcaster(symbol) {
+  setLoading('Checking Farcaster mentions...');
+  try {
+    const res = await fetch(`https://searchcaster.xyz/api/search?text=${encodeURIComponent(symbol)}&count=10`);
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data?.casts?.length || 0;
+  } catch { return null; }
+}
+
+// ── MAIN SCAN ──
+async function startScan() {
+  const ca = $('ca-input').value.trim();
+  if (!ca || ca.length < 10) {
+    alert('Masukkan contract address yang valid (0x...)');
+    return;
+  }
+
+  showLoading('SCANNING TOKEN...');
+
+  try {
+    // 1. DexScreener
+    const pair = await fetchDexScreener(ca);
+
+    // 2. GeckoTerminal
+    const geckoPool = await fetchGecko(ca);
+
+    // 3. Farcaster
+    const symbol = pair.baseToken?.symbol || ca.slice(0, 6);
+    const farcasterMentions = await fetchFarcaster(symbol);
+
+    setLoading('Kalkulasi entry score...');
+
+    // ── SCORES ──
+    const scores = {
+      liq: calcLiqScore(pair),
+      wallet: calcWalletScore(pair),
+      flow: calcFlowScore(pair),
+      holder: calcHolderScore(pair),
+      narrative: calcNarrativeScore(pair, pair.info)
+    };
+
+    const total = Math.round(
+      scores.liq * 0.25 +
+      scores.wallet * 0.25 +
+      scores.flow * 0.20 +
+      scores.holder * 0.15 +
+      scores.narrative * 0.15
+    );
+
+    // Narrative Lifecycle
+    const phaseIdx = detectPhase(pair, scores.narrative);
+    renderLifecycle(phaseIdx, pair, scores.narrative);
+
+    // Token sector badge
+    const tokenSector = detectSector(pair.baseToken?.symbol || '', pair.baseToken?.name || '');
+    $('token-sector-wrap').innerHTML = `<span class="token-sector-badge">🗂️ Sektor: ${tokenSector}</span>`;
+
+    // ── POPULATE ──
+    showResult();
+
+    // Identity
+    $('r-avatar').textContent = symbol.slice(0, 2).toUpperCase();
+    $('r-symbol').textContent = symbol;
+    $('r-pair').textContent = symbol + ' / ' + (pair.quoteToken?.symbol || '—') + ' · ' + (pair.dexId || '—');
+    $('r-addr').textContent = ca;
+    $('r-price').textContent = pair.priceUsd ? '$' + parseFloat(pair.priceUsd).toPrecision(5) : '—';
+    $('r-fdv').textContent = fmtUSD(pair.fdv);
+    $('r-liq').textContent = fmtUSD(pair.liquidity?.usd);
+    $('r-dexscreener-link').href = `https://dexscreener.com/base/${pair.pairAddress}`;
+    $('r-gecko-link').href = `https://www.geckoterminal.com/base/pools/${pair.pairAddress}`;
+    $('r-basescan-link').href = `https://basescan.org/token/${ca}`;
+
+    // Price action
+    $('c-5m').innerHTML = fmtPct(pair.priceChange?.m5);
+    $('c-1h').innerHTML = fmtPct(pair.priceChange?.h1);
+    $('c-6h').innerHTML = fmtPct(pair.priceChange?.h6);
+    $('c-24h').innerHTML = fmtPct(pair.priceChange?.h24);
+    $('c-vol').textContent = fmtUSD(pair.volume?.h24);
+    const totalTxns = (pair.txns?.h24?.buys || 0) + (pair.txns?.h24?.sells || 0);
+    $('c-txns').textContent = totalTxns.toLocaleString();
+
+    // Buy/sell
+    const buys = pair.txns?.h24?.buys || 0;
+    const sells = pair.txns?.h24?.sells || 0;
+    $('bs-buys').textContent = buys.toLocaleString();
+    $('bs-sells').textContent = sells.toLocaleString();
+    const bsPct = buys + sells > 0 ? Math.round(buys / (buys + sells) * 100) : 50;
+    $('bs-bar').style.width = bsPct + '%';
+    const bsText = bsPct > 60 ? `Buy dominan ${bsPct}% — buyer kuat, absorb sell pressure.` :
+      bsPct < 40 ? `Sell dominan ${100 - bsPct}% — seller pressure tinggi, hati-hati.` :
+      `Buy/sell seimbang ${bsPct}% buy — market dalam tahap discovery.`;
+    $('bs-interpretation').textContent = bsText;
+
+    // LP signals
+    $('lp-signals').innerHTML = buildLPSignals(pair);
+    $('liq-usd').textContent = fmtUSD(pair.liquidity?.usd);
+    const liqRatio = pair.liquidity?.usd > 0 ? (pair.volume?.h24 / pair.liquidity?.usd).toFixed(2) : '—';
+    $('liq-ratio').textContent = liqRatio + 'x';
+    const liqH = scores.liq >= 70 ? '🟢 Kuat' : scores.liq >= 50 ? '🟡 Medium' : '🔴 Lemah';
+    $('liq-health').textContent = liqH;
+    $('gecko-pool').textContent = geckoPool ? geckoPool.attributes?.name || 'Found' : 'Not indexed';
+
+    // Social
+    $('soc-farcaster').textContent = farcasterMentions !== null ? farcasterMentions + ' casts' : 'N/A';
+    $('soc-farcaster-sub').textContent = farcasterMentions > 20 ? '🔥 Hot topic!' : farcasterMentions > 5 ? 'Growing mentions' : 'Low mentions';
+    $('soc-boost').textContent = pair.boosts?.active ? '🚀 Active' : 'None';
+    const twitter = pair.info?.socials?.find(s => s.type === 'twitter');
+    const website = pair.info?.websites?.[0];
+    if (twitter) {
+      $('soc-twitter').innerHTML = `<a href="${twitter.url}" target="_blank" style="color:var(--blue3); text-decoration:none; font-family:'Bangers',cursive; font-size:22px; letter-spacing:1px;">✅ Ada ↗</a>`;
+      $('soc-twitter-url').innerHTML = `<a href="${twitter.url}" target="_blank" style="color:var(--text-muted); text-decoration:underline; font-size:9px; word-break:break-all;">${twitter.url}</a>`;
+    } else {
+      $('soc-twitter').textContent = '—';
+      $('soc-twitter-url').textContent = '';
+    }
+    if (website) {
+      $('soc-web').innerHTML = `<a href="${website.url}" target="_blank" style="color:var(--blue3); text-decoration:none; font-family:'Bangers',cursive; font-size:22px; letter-spacing:1px;">✅ Ada ↗</a>`;
+      $('soc-web-url').innerHTML = `<a href="${website.url}" target="_blank" style="color:var(--text-muted); text-decoration:underline; font-size:9px; word-break:break-all;">${website.url}</a>`;
+    } else {
+      $('soc-web').textContent = '—';
+      $('soc-web-url').textContent = '';
+    }
+
+    // Heat tag
+    const narrativeHeat = scores.narrative;
+    const heatClass = narrativeHeat > 65 ? 'heat-hot' : narrativeHeat > 45 ? 'heat-warm' : 'heat-cool';
+    const heatLabel = narrativeHeat > 65 ? '🔥 NARRATIVE PANAS' : narrativeHeat > 45 ? '☀️ NARRATIVE HANGAT' : '❄️ NARRATIVE DINGIN';
+    $('heat-tag-container').innerHTML = `<span class="heat-tag ${heatClass}">${heatLabel}</span>`;
+
+    // Scores
+    setScore('s-liq', 'sb-liq', scores.liq);
+    setScore('s-wallet', 'sb-wallet', scores.wallet);
+    setScore('s-flow', 'sb-flow', scores.flow);
+    setScore('s-holder', 'sb-holder', scores.holder);
+    setScore('s-narrative', 'sb-narrative', scores.narrative);
+
+    $('total-score').textContent = total;
+    const verdict = getVerdict(total);
+    $('entry-verdict').textContent = verdict.label;
+    $('entry-verdict').style.color = verdict.color;
+
+    // Entry conditions
+    const conditions = getEntryConditions(pair, scores);
+    $('entry-grid').innerHTML = conditions.map(c => `
+      <div class="entry-item ${c.cls}">
+        <div class="entry-signal-name">${c.name}</div>
+        <div class="entry-signal-val">${c.val}</div>
+      </div>
+    `).join('');
+
+    $('entry-interpretation').textContent = getEntryInterpretation(total, pair);
+
+    // Deployer
+    $('d-dex').textContent = pair.dexId || '—';
+    $('d-age').textContent = pair.pairCreatedAt ? fmtAge(Date.now() - pair.pairCreatedAt) : '—';
+    $('d-pair').textContent = shortAddr(pair.pairAddress);
+    $('d-chain').textContent = 'Base (' + (pair.chainId || 'base') + ')';
+
+    $('last-updated').textContent = '✅ ' + new Date().toLocaleTimeString('id-ID');
+
+  } catch(e) {
+    showError(e.message || 'Terjadi error saat fetching data.');
+  }
+}
+
+// ── NARRATIVE LIFECYCLE ENGINE ──
+const PHASES = [
+  { id: 'stealth',   emoji: '🥷', name: 'STEALTH ACCUMULATION', short: 'Stealth',   cls: 'phase-stealth',   desc: 'LP naik diam-diam tapi volume masih kecil. Social sepi. Ini zona akumulasi tersembunyi — sering jadi entry terbaik sebelum narrative terbentuk.' },
+  { id: 'emerging',  emoji: '🌱', name: 'EMERGING NARRATIVE',   short: 'Emerging',  cls: 'phase-emerging',  desc: 'Social mulai tumbuh, mention naik, holder baru masuk. Volume mulai ada tapi belum meledak. Sweet spot untuk early entry.' },
+  { id: 'expansion', emoji: '📈', name: 'STRUCTURED EXPANSION', short: 'Expansion', cls: 'phase-expansion', desc: 'Buyer dan LP aligned. Volume organic, structure sehat. Momentum nyata tapi belum crowded. Zona ideal untuk swing entry.' },
+  { id: 'euphoria',  emoji: '🔥', name: 'RETAIL EUPHORIA',      short: 'Euphoria',  cls: 'phase-euphoria',  desc: 'Volume meledak, semua orang masuk. FOMO tinggi. Entry di sini berisiko exit liquidity. Kalau masuk, size kecil dan TP cepat.' },
+  { id: 'dist',      emoji: '⚠️', name: 'DISTRIBUTION',         short: 'Dist.',     cls: 'phase-dist',      desc: 'Sell pressure naik, smart money mulai keluar. Harga mungkin masih tinggi tapi LP mulai tipis. Hati-hati jebakan.' },
+  { id: 'dead',      emoji: '🪦', name: 'DEAD LIQUIDITY',       short: 'Dead',      cls: 'phase-dead',      desc: 'LP masih ada tapi market mati. Volume sangat rendah, holder berkurang. Avoid kecuali ada catalyst kuat.' },
+];
+
+function detectPhase(pair, narrativeScore) {
+  const liq    = pair.liquidity?.usd || 0;
+  const vol    = pair.volume?.h24 || 0;
+  const buys   = pair.txns?.h24?.buys || 0;
+  const sells  = pair.txns?.h24?.sells || 0;
+  const total  = buys + sells;
+  const ch1h   = pair.priceChange?.h1 || 0;
+  const ch24h  = pair.priceChange?.h24 || 0;
+  const buyRat = total > 0 ? buys / total : 0.5;
+  const volLiq = liq > 0 ? vol / liq : 0;
+
+  // Dead: liq ada tapi vol sangat kecil
+  if (liq > 5000 && vol < 500 && total < 20) return 5;
+
+  // Distribution: sell dominant + harga turun
+  if (buyRat < 0.38 && ch1h < -5) return 4;
+
+  // Euphoria: vol meledak, semua beli gila
+  if (volLiq > 15 && buyRat > 0.65 && ch1h > 15) return 3;
+
+  // Expansion: buyer dominan, LP sehat, volume oke
+  if (buyRat > 0.55 && liq > 30000 && vol > 5000 && ch24h > 5) return 2;
+
+  // Emerging: social naik, volume mulai ada
+  if (narrativeScore > 50 && vol > 1000 && buyRat > 0.48) return 1;
+
+  // Stealth: default / LP naik, vol kecil
+  return 0;
+}
+
+function renderLifecycle(phaseIdx, pair, narrativeScore) {
+  const track = document.getElementById('lifecycle-track');
+  track.innerHTML = PHASES.map((p, i) => {
+    const cls = i === phaseIdx ? 'active' : i < phaseIdx ? 'passed' : '';
+    const labelCls = i === phaseIdx ? 'active' : '';
+    return `
+      <div class="lifecycle-step">
+        <div class="lifecycle-dot ${cls}">${p.emoji}</div>
+        <div class="lifecycle-label ${labelCls}">${p.short}</div>
+      </div>`;
+  }).join('');
+
+  const phase = PHASES[phaseIdx];
+  const box = document.getElementById('lifecycle-phase-box');
+  box.className = 'lifecycle-phase-box ' + phase.cls;
+  document.getElementById('lifecycle-emoji').textContent = phase.emoji;
+  document.getElementById('lifecycle-name').textContent = phase.name;
+  document.getElementById('lifecycle-desc').textContent = phase.desc;
+
+  // ── WHY THIS PHASE ──
+  if (pair) {
+    const reasons = getPhaseReasons(phaseIdx, pair, narrativeScore || 0);
+    const whyBox = document.getElementById('why-phase-box');
+    const whyList = document.getElementById('why-phase-list');
+    if (reasons.length > 0) {
+      whyList.innerHTML = reasons.map(r =>
+        `<div class="why-phase-item">
+          <span class="why-phase-dot">•</span>
+          <span>${r}</span>
+        </div>`
+      ).join('');
+      whyBox.style.display = 'block';
+    } else {
+      whyBox.style.display = 'none';
+    }
+  }
+}
+
+function getPhaseReasons(phaseIdx, pair, narrativeScore) {
+  const liq    = pair.liquidity?.usd || 0;
+  const vol    = pair.volume?.h24 || 0;
+  const buys   = pair.txns?.h24?.buys || 0;
+  const sells  = pair.txns?.h24?.sells || 0;
+  const total  = buys + sells;
+  const ch1h   = pair.priceChange?.h1 || 0;
+  const ch24h  = pair.priceChange?.h24 || 0;
+  const buyRat = total > 0 ? buys / total : 0.5;
+  const buyPct = Math.round(buyRat * 100);
+  const volLiq = liq > 0 ? vol / liq : 0;
+  const hasBoost = pair.boosts?.active;
+
+  const u = v => `<span class="why-val-up">${v}</span>`;
+  const d = v => `<span class="why-val-down">${v}</span>`;
+  const n = v => `<span class="why-val-neutral">${v}</span>`;
+  const fmt = v => v >= 1e6 ? '$'+(v/1e6).toFixed(1)+'M' : v >= 1e3 ? '$'+(v/1e3).toFixed(0)+'K' : '$'+v.toFixed(0);
+
+  const reasons = [];
+
+  if (phaseIdx === 0) { // STEALTH
+    if (liq > 5000) reasons.push(`LP ${u(fmt(liq))} ada tapi volume masih ${d(fmt(vol) + ' (kecil)')}`);
+    if (total < 50) reasons.push(`Txn 24h hanya ${n(total + ' transaksi')} — market masih sepi`);
+    if (ch24h < 5 && ch24h > -10) reasons.push(`Pergerakan harga sideways ${n((ch24h > 0 ? '+' : '') + ch24h.toFixed(1) + '%')} — akumulasi diam-diam`);
+    if (narrativeScore < 50) reasons.push(`Social/narrative score rendah ${n(Math.round(narrativeScore))} — belum viral`);
+  } else if (phaseIdx === 1) { // EMERGING
+    if (narrativeScore > 50) reasons.push(`Narrative score ${u(Math.round(narrativeScore))} — social mulai tumbuh`);
+    if (vol > 1000) reasons.push(`Volume mulai ada ${u(fmt(vol))} — buyer baru masuk`);
+    if (buyRat > 0.48) reasons.push(`Buy ratio ${u(buyPct + '%')} — lebih banyak yang beli`);
+    reasons.push(`Sweet spot early entry sebelum meledak`);
+  } else if (phaseIdx === 2) { // EXPANSION
+    if (buyRat > 0.55) reasons.push(`Buy ratio dominan ${u(buyPct + '%')} dari ${n(total)} txn`);
+    if (liq > 30000) reasons.push(`Liquidity solid ${u(fmt(liq))} — struktur sehat`);
+    if (vol > 5000) reasons.push(`Volume organic ${u(fmt(vol))} — bukan pump dadakan`);
+    if (ch24h > 5) reasons.push(`Price action positif ${u('+' + ch24h.toFixed(1) + '%')} 24h`);
+  } else if (phaseIdx === 3) { // EUPHORIA
+    if (volLiq > 15) reasons.push(`Vol/Liq ratio ${d(volLiq.toFixed(1) + 'x')} — meledak keras`);
+    if (buyRat > 0.65) reasons.push(`FOMO mode: ${d(buyPct + '%')} buy ratio`);
+    if (ch1h > 15) reasons.push(`Pump ${d('+' + ch1h.toFixed(1) + '%')} dalam 1 jam`);
+    if (hasBoost) reasons.push(`DexScreener boost aktif — banyak yang liat`);
+    reasons.push(`${d('High risk:')} kemungkinan exit liquidity buat yang late`);
+  } else if (phaseIdx === 4) { // DISTRIBUTION
+    if (buyRat < 0.38) reasons.push(`Sell pressure dominan — buy ratio cuma ${d(buyPct + '%')}`);
+    if (ch1h < -5) reasons.push(`Harga ${d(ch1h.toFixed(1) + '%')} dalam 1 jam`);
+    if (liq > 0) reasons.push(`LP masih ${n(fmt(liq))} tapi smart money mulai cabut`);
+    reasons.push(`${d('Warning:')} jangan beli tanpa catalyst baru`);
+  } else if (phaseIdx === 5) { // DEAD
+    if (liq > 5000) reasons.push(`LP ${n(fmt(liq))} masih ada tapi tidak bergerak`);
+    if (vol < 500) reasons.push(`Volume 24h cuma ${d(fmt(vol))} — market mati`);
+    if (total < 20) reasons.push(`Hanya ${d(total + ' transaksi')} dalam 24 jam`);
+    reasons.push(`Butuh catalyst kuat untuk revival`);
+  }
+
+  return reasons;
+}
+
+// ── SECTOR DETECTION ──
+const SECTOR_KEYWORDS = {
+  'AI & Tech':    ['ai','gpt','neural','agi','llm','bot','agent','virtuals','compute'],
+  'SocialFi':     ['social','cast','farcaster','friend','lens','creator','tip'],
+  'Meme':         ['doge','pepe','shib','inu','cat','meme','wif','bonk','mog','brett','toshi'],
+  'DeFi':         ['swap','lend','yield','vault','stake','defi','lp','amm','aero','uni'],
+  'GameFi':       ['game','play','nft','guild','arena','quest','rpg','pixel'],
+  'RWA':          ['rwa','real','estate','gold','bond','asset','tokenize'],
+  'Infrastructure':['bridge','relay','rpc','infra','chain','layer','node','protocol'],
+};
+
+function detectSector(symbol, name) {
+  const str = (symbol + ' ' + (name || '')).toLowerCase();
+  for (const [sector, kws] of Object.entries(SECTOR_KEYWORDS)) {
+    if (kws.some(k => str.includes(k))) return sector;
+  }
+  return 'Other';
+}
+
+// ── SECTOR HEATMAP (fetch Base trending dari DexScreener) ──
+async function loadSectorHeatmap() {
+  try {
+    const res = await fetch('https://api.dexscreener.com/latest/dex/tokens/base');
+    let pairs = [];
+    if (res.ok) {
+      const data = await res.json();
+      pairs = (data.pairs || []).filter(p => p.chainId === 'base');
+    }
+    if (!pairs.length) {
+      // fallback: search popular Base tokens
+      const r2 = await fetch('https://api.dexscreener.com/latest/dex/search/?q=base+meme');
+      const d2 = await r2.json();
+      pairs = (d2.pairs || []).filter(p => p.chainId === 'base').slice(0, 50);
+    }
+
+    // Group by sector
+    const sectors = {};
+    pairs.forEach(p => {
+      const sec = detectSector(p.baseToken?.symbol || '', p.baseToken?.name || '');
+      if (!sectors[sec]) sectors[sec] = { vol: 0, liq: 0, count: 0, changes: [] };
+      sectors[sec].vol   += p.volume?.h24 || 0;
+      sectors[sec].liq   += p.liquidity?.usd || 0;
+      sectors[sec].count += 1;
+      if (p.priceChange?.h24 != null) sectors[sec].changes.push(p.priceChange.h24);
+    });
+
+    // Compute avg change per sector
+    const results = Object.entries(sectors).map(([name, d]) => {
+      const avgChg = d.changes.length ? d.changes.reduce((a,b) => a+b, 0) / d.changes.length : 0;
+      return { name, avgChg, vol: d.vol, liq: d.liq, count: d.count };
+    }).sort((a, b) => b.vol - a.vol);
+
+    const maxVol = Math.max(...results.map(r => r.vol), 1);
+
+    const grid = document.getElementById('sector-grid');
+    grid.innerHTML = results.slice(0, 8).map(r => {
+      const chg = r.avgChg;
+      const sign = chg > 0 ? '+' : '';
+      const cardCls = chg > 8 ? 'sector-hot' : chg > 2 ? 'sector-warm' : chg < -5 ? 'sector-cold' : 'sector-cool';
+      const barCol  = chg > 0 ? '#27a86e' : '#e2534a';
+      const pctCol  = chg > 0 ? 'var(--green)' : chg < 0 ? 'var(--red)' : 'var(--text-muted)';
+      const tag     = chg > 8 ? '🔥 HOT' : chg > 2 ? '📈 RISING' : chg < -5 ? '❄️ COOLING' : '➡️ SIDEWAYS';
+      const barW    = Math.min(Math.round(r.vol / maxVol * 100), 100);
+      const highlight = chg > 8 ? '🚀' : chg < -5 ? '📉' : '';
+      return `
+        <div class="sector-card ${cardCls}">
+          <div class="sector-highlight">${highlight}</div>
+          <div class="sector-name">${r.name}</div>
+          <div class="sector-pct" style="color:${pctCol};">${sign}${chg.toFixed(1)}%</div>
+          <div class="sector-bar-wrap"><div class="sector-bar-fill" style="width:${barW}%; background:${barCol};"></div></div>
+          <div class="sector-tag" style="color:${pctCol};">${tag} · ${r.count} pairs</div>
+        </div>`;
+    }).join('');
+
+    document.getElementById('sector-updated').textContent = 'Updated ' + new Date().toLocaleTimeString('id-ID');
+
+    return results; // return for per-token sector matching
+  } catch(e) {
+    document.getElementById('sector-grid').innerHTML = '<div style="color:var(--text-muted);font-size:12px;font-weight:700;grid-column:1/-1;padding:1rem;text-align:center;">Gagal load sector data.</div>';
+    return [];
+  }
+}
+
+// Enter key support
+$('ca-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') startScan();
+});
+
+</script>
+</body>
+</html>
